@@ -9,7 +9,7 @@ from .util import PROFANE_WORDS, restore_shape
 
 CENSORING_SEQUENCE = r'[*@%]+'
 CENSORING_SEQUENCE_TEMPLATE = re.compile(CENSORING_SEQUENCE)
-CENSORED_TOKEN_STRICT_TEMPLATE = re.compile(f'[а-яА-ЯёЁa-zA-Z036π€]+(?:{CENSORING_SEQUENCE}[а-яА-ЯёЁa-zA-Z036π€]+)+')
+CENSORED_TOKEN_STRICT_TEMPLATE = re.compile(f'[а-яА-ЯёЁa-zA-Z036π€b]+(?:{CENSORING_SEQUENCE}[а-яА-ЯёЁa-zA-Z036π€b]+)+')
 
 MIN = 0
 N = 5
@@ -33,14 +33,16 @@ def stats(path: str):
     n_censored_texts = 0
     n_unhandled_matches = 0
 
-    pbar = tqdm(total = len(df.index))
+    # pbar = tqdm(total = len(df.index))
+
+    updated_texts = []
 
     for text in df['text']:
 
         if len(matches := CENSORED_TOKEN_STRICT_TEMPLATE.findall(text)) > 0:
             original_text = text
 
-            verbose = MIN <= n_censored_texts < (MIN + N)
+            # verbose = MIN <= n_censored_texts < (MIN + N)
 
             # if verbose:
             #     print(original_text)
@@ -82,6 +84,8 @@ def stats(path: str):
             #     print(text)
             #     print('-' * 100)
 
+        updated_texts.append(text)
+
         # elif (match := CENSORED_TOKEN_LEFT_ONLY_TEMPLATE.search(text)) is not None:
         #     print(text)
         #     print(match)
@@ -89,7 +93,10 @@ def stats(path: str):
         #     print(text)
         #     print(match)
 
-        pbar.update()
+        # pbar.update()
+
+    df['text'] = updated_texts
+    df.to_csv('assets/anecdotes-uncensored.csv', sep = '\t', index = False)
 
     print(f'Found {n_censored_texts} censored texts')
     print(f'Found {n_unhandled_matches} unhandled matches')
