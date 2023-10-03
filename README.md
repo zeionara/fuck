@@ -1,6 +1,6 @@
 # fuck
 
-Fuck: an ultimate censorship killer - a tiny program for uncensoring text
+Fuck: an ultimate censorship killer - a tiny program for uncensoring russian texts
 
 ## Usage
 
