@@ -3,12 +3,15 @@ import re
 from click import group, argument
 from pandas import read_csv
 
-from .util import CENSORED_TOKENS
+from .util import PROFANE_WORDS, restore_shape
 
 
 CENSORING_SEQUENCE = r'[*@%]+'
 CENSORING_SEQUENCE_TEMPLATE = re.compile(CENSORING_SEQUENCE)
-CENSORED_TOKEN_STRICT_TEMPLATE = re.compile(f'[а-яА-ЯёЁ]+{CENSORING_SEQUENCE}[а-яА-ЯёЁ]+')
+CENSORED_TOKEN_STRICT_TEMPLATE = re.compile(f'[а-яА-ЯёЁa-zA-Z6]+(?:{CENSORING_SEQUENCE}[а-яА-ЯёЁ]+)+')
+
+MIN = 90
+MAX = 95
 
 # CENSORED_TOKEN_LEFT_ONLY_TEMPLATE = re.compile(r'[а-яА-ЯёЁ]+[*@]+(?:\S+)?')
 # CENSORED_TOKEN_RIGHT_ONLY_TEMPLATE = re.compile(r'(?:\S+)?[*@]+[а-яА-ЯёЁ]+')
@@ -27,30 +30,47 @@ def stats(path: str):
     n_censored_texts = 0
 
     for text in df['text']:
-        original_text = text
 
         if len(matches := CENSORED_TOKEN_STRICT_TEMPLATE.findall(text)) > 0:
+            original_text = text
+
+            verbose = MIN <= n_censored_texts < MAX
+
+            if verbose:
+                print(original_text)
+
             # print(text)
             for match in matches:
+
+                if verbose:
+                    print('> ', match)
+
                 template = CENSORING_SEQUENCE_TEMPLATE.sub('.*', match)
+                lower_template = CENSORING_SEQUENCE_TEMPLATE.sub('.*', match.lower())
 
                 # print(template)
 
                 replacement = None
 
-                for token in CENSORED_TOKENS:
-                    if re.fullmatch(template, token) is not None:
-                        replacement = token
+                for token in PROFANE_WORDS:
+                    if re.fullmatch(lower_template, token) is not None:
+                        replacement = restore_shape(template, token)
                         break
 
+                # if verbose:
+                #     print(restore_shape(template, replacement))
+
                 if replacement is not None:
+                    if verbose:
+                        print('< ', replacement)
                     text = text.replace(match, replacement)
 
             n_censored_texts += 1
 
-            print(original_text)
-            print(text)
-            print('-' * 100)
+            if verbose:
+                print(text)
+                print('-' * 100)
+
         # elif (match := CENSORED_TOKEN_LEFT_ONLY_TEMPLATE.search(text)) is not None:
         #     print(text)
         #     print(match)
