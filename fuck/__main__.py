@@ -8,10 +8,10 @@ from .util import PROFANE_WORDS, restore_shape
 
 CENSORING_SEQUENCE = r'[*@%]+'
 CENSORING_SEQUENCE_TEMPLATE = re.compile(CENSORING_SEQUENCE)
-CENSORED_TOKEN_STRICT_TEMPLATE = re.compile(f'[а-яА-ЯёЁa-zA-Z6]+(?:{CENSORING_SEQUENCE}[а-яА-ЯёЁ]+)+')
+CENSORED_TOKEN_STRICT_TEMPLATE = re.compile(f'[а-яА-ЯёЁa-zA-Z6]+(?:{CENSORING_SEQUENCE}[а-яА-ЯёЁa-zA-Z6]+)+')
 
-MIN = 90
-MAX = 95
+MIN = 30
+MAX = 35
 
 # CENSORED_TOKEN_LEFT_ONLY_TEMPLATE = re.compile(r'[а-яА-ЯёЁ]+[*@]+(?:\S+)?')
 # CENSORED_TOKEN_RIGHT_ONLY_TEMPLATE = re.compile(r'(?:\S+)?[*@]+[а-яА-ЯёЁ]+')
