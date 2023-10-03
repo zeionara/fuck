@@ -9,11 +9,11 @@ morph = MorphAnalyzer(lang = 'ru')
 
 replacements = {
     'а': ('а', 'a'),
-    'б': ('б', '6'),
+    'б': ('б', '6', 'b'),
     'в': ('в', ),
     'г': ('г', ),
     'д': ('д', ),
-    'е': ('е', 'e'),
+    'е': ('е', 'e', '€'),
     'ё': ('ё', 'е', 'e'),
     'ж': ('ж', ),
     'з': ('з', '3', 'z'),
@@ -23,11 +23,11 @@ replacements = {
     'л': ('л', ),
     'м': ('м', ),
     'н': ('н', 'h'),
-    'о': ('о', 'o'),
-    'п': ('п', ),
+    'о': ('о', 'o', '0'),
+    'п': ('п', 'π'),
     'р': ('р', 'p'),
     'с': ('с', 'c'),
-    'т': ('т', ),
+    'т': ('т', 't'),
     'у': ('у', 'y'),
     'ф': ('ф', ),
     'х': ('х', 'x'),
@@ -46,7 +46,7 @@ replacements = {
 
 def replace(token, prefix = '', index = 0):
     if index < len(token):
-        for replacement in replacements[token[index]]:
+        for replacement in replacements.get(token[index], (token[index], )):
             for token_form in replace(token, prefix = f'{prefix}{replacement}', index = index + 1):
                 yield token_form
     else:
