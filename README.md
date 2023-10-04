@@ -1,5 +1,9 @@
 # fuck
 
+<p align="center">
+    <img src="assets/logo.png"/>
+</p>
+
 **F**uck: an **u**ltimate **c**ensorship **k**iller - a tiny program for uncensoring russian texts
 
 ## Usage
