@@ -52,6 +52,12 @@ python -m fuck stats
 
 ## Installation
 
+To install from `pip`:
+
+```sh
+pip install f-ck
+```
+
 To create environment and install all dependencies execute the following command:
 
 ```sh

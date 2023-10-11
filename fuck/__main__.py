@@ -12,7 +12,7 @@ def main():
 
 @main.command()
 @argument('path', type = str, default = 'assets/anecdotes.tsv')
-@option('--dictionary', '-d', type = str, default = 'assets/profane-words.txt')
+@option('--dictionary', '-d', type = str)  # , default = 'assets/profane-words.txt')
 @option('--verbose', '-v', is_flag = True)
 @option('--output', '-o', type = str, help = 'path to the output file with uncensored texts')
 def stats(path: str, dictionary: str, verbose: bool, output: str):
@@ -50,7 +50,7 @@ def stats(path: str, dictionary: str, verbose: bool, output: str):
 
 @main.command()
 @argument('text', type = str)
-@option('--dictionary', '-d', type = str, default = 'assets/profane-words.txt')
+@option('--dictionary', '-d', type = str)  # , default = 'assets/profane-words.txt')
 @option('--verbose', '-v', is_flag = True)
 def uncensor(text: str, dictionary: str, verbose: bool):
     text, _, _ = ProfanityHandler(path = dictionary, verbose = verbose).uncensor(text)

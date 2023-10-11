@@ -1,2 +1,4 @@
 **/*.pyc
 assets/anecdotes.tsv
+dist/*
+*.egg-info

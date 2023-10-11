@@ -1,4 +1,5 @@
 import re
+import os
 
 from pymorphy3 import MorphAnalyzer
 from tqdm import tqdm
@@ -10,7 +11,11 @@ SPACE = ' '
 
 
 class ProfanityHandler:
-    def __init__(self, path: str, verbose: bool = False):
+    def __init__(self, path: str = None, verbose: bool = False):
+        if path is None:
+            # path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'assets', 'profane-words.txt')
+            path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'profane-words.txt')
+
         self.path = path
         self.morph = morph = MorphAnalyzer(lang = 'ru')
 
