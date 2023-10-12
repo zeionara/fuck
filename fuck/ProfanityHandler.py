@@ -9,12 +9,13 @@ from .util import make_forms, restore_shape, CENSORED_TOKEN_TEMPLATE, to_templat
 EXCEPTION_MARK = '*'
 SPACE = ' '
 
+DEFAULT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'profane-words.txt')
+
 
 class ProfanityHandler:
     def __init__(self, path: str = None, verbose: bool = False):
         if path is None:
-            # path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'assets', 'profane-words.txt')
-            path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'profane-words.txt')
+            path = DEFAULT_PATH
 
         self.path = path
         self.morph = morph = MorphAnalyzer(lang = 'ru')
@@ -27,16 +28,16 @@ class ProfanityHandler:
             pbar = tqdm(total = len(lines), desc = 'Loading profane words dictionary') if verbose else None
 
             for word in lines:
-                if word and not word.startswith('#'):
+                if word and not word.startswith('#'):  # skip comments
                     replacement = None
 
-                    parts = word.split(SPACE, maxsplit = 1)
+                    parts = word.split(SPACE, maxsplit = 1)  # handle custom replacements
 
                     if len(parts) > 1:
                         word = parts[0]
                         replacement = parts[1]
 
-                    parts = word.split(EXCEPTION_MARK, maxsplit = 1)
+                    parts = word.split(EXCEPTION_MARK, maxsplit = 1)  # handle exceptions (exceptions must not be expanded by the morph analyzer)
                     word = parts[0]
 
                     if len(parts) > 1:
@@ -48,22 +49,6 @@ class ProfanityHandler:
                         entries = morph.parse(word)
 
                         if len(entries) > 0:
-                            # replacement_entries = None if replacement is None else morph.parse(replacement)
-
-                            # assert replacement_entries is None or len(replacement_entries) > 0, 'Replacement cannot have fewer associated entries than the base word'
-
-                            # lexeme = entries[0].lexeme
-                            # replacement_lexeme = None if replacement_entries is None else replacement_entries[0].lexeme
-
-                            # print([item.word for item in replacement_lexeme], [item.word for item in lexeme])
-
-                            # if replacement_lexeme is not None and len(replacement_lexeme) == len(lexeme):
-                            #     for lexeme_entry, replacement_lexeme_entry in zip(lexeme, replacement_lexeme):
-                            #         for form in make_forms(lexeme_entry.word):
-                            #             words.append(form)
-                            #             replacements[form] = replacement_lexeme_entry.word
-                            # else:
-
                             for lexeme in entries[0].lexeme:
                                 for form in make_forms(word := lexeme.word):
                                     words.append(form)
@@ -98,14 +83,11 @@ class ProfanityHandler:
         return text.replace(word, self.replacements.get(match, match)), True
 
     def uncensor(self, text: str):
-        # found_replacements = False
         censored = False
         unhandled_matches = []
 
         for match in CENSORED_TOKEN_TEMPLATE.findall(text):
             text, found_replacement = self._replace(text, match)
-
-            # found_replacements = found_replacements or found_replacement
 
             if not found_replacement:
                 unhandled_matches.append(match)
@@ -113,7 +95,7 @@ class ProfanityHandler:
             if censored is False:
                 censored = True
 
-        return text, censored, unhandled_matches  # found_replacements, censored
+        return text, censored, unhandled_matches
 
     @property
     def length(self):

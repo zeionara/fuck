@@ -1,6 +1,6 @@
 import re
 
-CENSORING_SEQUENCE = r'[*@%]+'
+CENSORING_SEQUENCE = r'[*@%#$&]+'
 ALPHANUMERIC_SEQUENCE = r'[а-яА-ЯёЁa-zA-Z036π€b]+'
 ANY_CHARACTERS_PATTERN = '.*'
 

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='f-ck',
-    version='0.0.11',
+    version='0.0.12',
     license='Apache 2.0',
     author='Zeio Nara',
     author_email='zeionara@gmail.com',

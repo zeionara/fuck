@@ -2,7 +2,7 @@ from click import group, argument, option
 from pandas import read_csv
 from tqdm import tqdm
 
-from .ProfanityHandler import ProfanityHandler
+from .ProfanityHandler import ProfanityHandler, DEFAULT_PATH
 
 
 @group()
@@ -31,6 +31,10 @@ def stats(path: str, dictionary: str, verbose: bool, output: str):
 
         unhandled_matches.extend(matches)
 
+        # if len(matches) > 0:
+        #     print(uncensored_text)
+        #     print(matches)
+
         if output is not None:
             uncensored_texts.append(uncensored_text)
 
@@ -46,6 +50,27 @@ def stats(path: str, dictionary: str, verbose: bool, output: str):
 
     print(f'Found {n_censored_texts} censored texts')
     print(f'Found {len(unhandled_matches)} unhandled matches: {", ".join(unhandled_matches)}')
+
+
+@main.command()
+@argument('path', type = str, default = DEFAULT_PATH)
+def sort(path: str):
+    merged = []
+
+    with open(path, 'r', encoding = 'utf-8') as file:
+        group = []
+
+        for line in file.read().split('\n'):
+            if line:
+                group.append(line)
+            elif len(group) > 0:
+                merged.extend(sorted(group))
+                merged.append('')
+
+                group = []
+
+    for item in merged:
+        print(item)
 
 
 @main.command()
